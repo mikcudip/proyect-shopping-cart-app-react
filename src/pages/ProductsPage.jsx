@@ -1,38 +1,25 @@
-// min 6
-import { useEffect } from "react";
-import { useState } from "react";
-import Swal from "sweetalert2";
+import { useContext } from "react";
 import CardComponent from "../components/CardComponent";
+import { ProductContext } from "../context/ProductContext";
+import { ShoppingCartContext } from "../context/ShoppingCartContext";
 
 const ProductsPage = () => {
-  const [products, setProducts] = useState([]);
-  const fetchProducts = async () => {
-    try {
-      const res = await fetch("https://fakestoreapi.com/products");
-      const data = await res.json();
-      setProducts(data);
-    } catch (warning) {
-      Swal.fire({
-        icon: "error",
-        title: "¡Error!",
-        text: "Hubo un problema al cargar los productos",
-      });
-      console.error(`Algo salio mal: ${warning}`);
-    }
-  };
-  useEffect(() => {
-    fetchProducts();
-  }, [products]);
+  const { products } = useContext(ProductContext);
+  const { addProduct, removeProduct } = useContext(ShoppingCartContext);
   return (
     <>
       <h1>Productos</h1>
       <hr />
       {products.map((product) => (
         <CardComponent
+          key={product.id}
+          id={product.id}
           image={product.image}
           title={product.title}
           description={product.description}
           price={product.price}
+          handlerAdd={() => addProduct(product)}
+          handlerRemove={() => removeProduct(product.id)}
         />
       ))}
     </>
